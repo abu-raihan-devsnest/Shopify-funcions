@@ -1,0 +1,204 @@
+
+<div>  
+  <div id="bundle-ui-root">loading...</div>
+</div>
+
+<style>
+  #products-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .product-card {
+    display: flex;
+    gap: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    align-items: center;
+    background: #fff;
+  }
+
+  .product-card img {
+    width: auto;
+    height: 100px;
+    border-radius: 4px;
+    object-fit: cover;
+  }
+
+  .product-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .product-title {
+    font-weight: bold;
+    margin: 0;
+    font-size: 16px;
+  }
+
+  .product-price {
+    margin-top: 4px;
+    color: #555;
+    font-size: 14px;
+  }
+</style>
+
+
+{% comment %} <script>
+
+const bundleData = {
+  id: 7,
+  title: "Prebuilt new",
+  type: "pre-built",
+  bundle_title: "asdf",
+  bundle_description: "adf",
+  shopify_prebuilt_bundle_operation_id: "gid://shopify/ProductBundleOperation/39370555494",
+  preview_urls: [
+    "https://cdn.shopify.com/s/files/1/0594/9125/4374/files/Main_0a40b01b-5021-48c1-80d1-aa8ab4876d3d.jpg?v=1719472366"
+  ],
+  default_preview_url: "https://cdn.shopify.com/s/files/1/0594/9125/4374/files/Main_0a40b01b-5021-48c1-80d1-aa8ab4876d3d.jpg?v=1719472366",
+  products: [
+    {
+      id: "7333216485478",
+      title: "The Collection Snowboard: Hydrogen",
+      medias: [
+        "https://cdn.shopify.com/s/files/1/0594/9125/4374/files/Main_0a40b01b-5021-48c1-80d1-aa8ab4876d3d.jpg?v=1719472366"
+      ],
+      variants: [
+        {
+          id: "42123272683622",
+          title: "Purple",
+          price: "600.00",
+          quantity: 1,
+          image_url: null
+        }
+      ]
+    },
+    {
+      id: "7333216583782",
+      title: "The Complete Snowboard",
+      medias: [
+        "https://cdn.shopify.com/s/files/1/0594/9125/4374/files/Main_589fc064-24a2-4236-9eaf-13b2bd35d21d.jpg?v=1719472366"
+      ],
+      variants: [
+        {
+          id: "41764301635686",
+          title: "Ice",
+          price: "699.95",
+          quantity: 1,
+          image_url: null
+        },
+        {
+          id: "41764301701222",
+          title: "Dawn",
+          price: "699.95",
+          quantity: 1,
+          image_url: null
+        },
+        {
+          id: "41764301799526",
+          title: "Powder",
+          price: "699.95",
+          quantity: 1,
+          image_url: null
+        },
+        {
+          id: "41764301897830",
+          title: "Electric",
+          price: "699.95",
+          quantity: 1,
+          image_url: null
+        },
+        {
+          id: "41764301963366",
+          title: "Sunset",
+          price: "699.95",
+          quantity: 1,
+          image_url: null
+        }
+      ]
+    }
+  ],
+  discount: {
+    type: "percentage",
+    value: "20",
+    method: "shopify_scripts",
+    is_free_shipping: true
+  },
+  bundle_product_option: "create",
+  setting: {
+    schedule: {
+      start_date: "2026-12-12",
+      start_time: "10:48",
+      end_date: null,
+      end_time: null,
+      timezone: "(GMT-03:00)",
+      will_apply_end_date: false
+    },
+    audiences: [
+      {
+        id: 22,
+        name: "All users"
+      }
+    ],
+    bundle_details: {
+      discount_label_in_cart: "Discount label in cart",
+      how_to_present_bundle_in_cart: "line_item"
+    },
+    product_segment: {
+      tags: ["dynamatic-engraving-widget"],
+      product_type: "giftcard",
+      product_vendor: "Hydrogen Vendor",
+      category: null,
+      collections: []
+    },
+    show_on_included_product_page: false
+  }
+}; {% endcomment %}
+
+
+  {% comment %} fetch("https://presents-doug-louise-wallpaper.trycloudflare.com/api/bundles/7")
+    .then(res => res.json())
+    .then(data => {
+    }); {% endcomment %}
+    {% comment %} document.getElementById("promo-content").innerText = JSON.stringify(bundleData); {% endcomment %}
+
+
+       {% comment %} const container = document.getElementById("products-container");
+
+  bundleData.products.forEach((product) => {
+    const card = document.createElement("div");
+    card.className = "product-card";
+
+    // Image
+    const img = document.createElement("img");
+    img.src = product.medias?.[0] || "";
+    img.alt = product.title;
+    card.appendChild(img);
+
+    // Info container
+    const info = document.createElement("div");
+    info.className = "product-info";
+
+    // Title
+    const title = document.createElement("p");
+    title.className = "product-title";
+    title.innerText = product.title;
+    info.appendChild(title);
+
+    // Price (first variant price shown)
+    const price = document.createElement("p");
+    price.className = "product-price";
+    price.innerText = `$${product.variants?.[0]?.price || "0.00"}`;
+    info.appendChild(price);
+
+    card.appendChild(info);
+    container.appendChild(card);
+  });
+</script> {% endcomment %}
+
+<script src="{{ 'bundle-ui.js' | asset_url }}" defer type="module"></script>
+

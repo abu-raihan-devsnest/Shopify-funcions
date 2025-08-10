@@ -1,0 +1,24 @@
+{% comment %} {% assign avg_rating = block.settings.product.metafields.demo.avg_rating.value | round %}
+<span style="color:{{ block.settings.colour }}">
+  {% render 'stars', rating: avg_rating %}
+</span>
+  {% endcomment %}
+{% comment %} <div>Hello bangladesh</div> {% endcomment %}
+
+{% render 'stars', title: 'Hello theme' %}
+
+
+{% schema %}
+{
+  "name": "Dynamatic bundle",
+  "target": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Default title"
+    }
+  ]
+}
+{% endschema %}
