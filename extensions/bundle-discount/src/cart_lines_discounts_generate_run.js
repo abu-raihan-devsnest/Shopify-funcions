@@ -1,6 +1,5 @@
 export function cartLinesDiscountsGenerateRun(input) {
   console.log("function run discount");
-
   if (!input?.cart?.lines?.length) {
     throw new Error("No cart lines found");
   }
@@ -8,7 +7,7 @@ export function cartLinesDiscountsGenerateRun(input) {
   console.log("input?.cart?.lines", JSON.stringify(input?.cart?.lines));
   const operations = [];
 
-  const BUNDLE_VARIANT_GID = `gid://shopify/ProductVariant/43001111248998`;
+  const BUNDLE_VARIANT_GID = `gid://shopify/ProductVariant/43009479049318`;
 
   input?.cart?.lines?.forEach((line) => {
     if (line?.merchandise?.id === BUNDLE_VARIANT_GID) {

@@ -1,13 +1,27 @@
-query CartTransformRunInput {
+query CartTransformRunInput{
   cart {
     lines {
       id
-      quantity,
-      cost {
-        subtotalAmount {
+      quantity
+      merchandise{
+          __typename
+        ...on ProductVariant{
+          id
+          product{
+            id
+            title
+            # productTags: hasAnyTag(tags: ["Bundle 1", "Bundle 2"])
+          }
+        }
+      }
+      cost{
+        amountPerQuantity {
             amount
         }
-       }
+        subtotalAmount{
+          amount
+        }
+      }
     }
   }
 }
