@@ -7,7 +7,7 @@ const bundleData = {
   bundle_title: "asdf",
   bundle_description: "adf",
   shopify_prebuilt_bundle_operation_id:
-    "gid://shopify/ProductBundleOperation/39370555494",
+    "gid://shopify/ProductBundleOperation/7705503301734",
   preview_urls: [
     "https://cdn.shopify.com/s/files/1/0594/9125/4374/files/Main_0a40b01b-5021-48c1-80d1-aa8ab4876d3d.jpg?v=1719472366",
   ],
@@ -28,7 +28,7 @@ const bundleData = {
           quantity: 1,
           image_url: null,
         },
-      ],
+      ], 
     },
     {
       id: "7333216583782",
@@ -73,6 +73,7 @@ const bundleData = {
           image_url: null,
         },
       ],
+      is_excluded: true,
     },
   ],
   discount: {
@@ -81,7 +82,7 @@ const bundleData = {
     method: "shopify_scripts",
     is_free_shipping: true,
   },
-  bundle_product_option: "create",
+  bundle_product_option: "none",
   setting: {
     schedule: {
       start_date: "2026-12-12",
@@ -116,27 +117,24 @@ const STOREFRONT_ACCESS_TOKEN = "95b79191ef574df85795804c72ebe766";
 const SHOP_DOMAIN = "abu-raihan-jr.myshopify.com";
 
 const handleAddBundleToCart = async () => {
-  console.log("add cart to bundle a click hoise");
-
-  // প্রতিটি প্রোডাক্টের প্রথম variant নিয়ে bundle বানাচ্ছি
+ 
+    // প্রতিটি প্রোডাক্টের প্রথম variant নিয়ে bundle বানাচ্ছি
   const lines = bundleData.products.map((product) => ({
     merchandiseId: `gid://shopify/ProductVariant/${product.variants[0].id}`,
     quantity: product.variants[0].quantity || 1,
   }));
 
-  console.log("lines", lines);
+  const formData = {
+    items: lines.map(({ merchandiseId, quantity }) => ({
+      id: Number(merchandiseId.replace("gid://shopify/ProductVariant/", "")),
+      quantity,
+      properties: {
+        bundleId: String(bundleData.id),
+      },
+    })),
+  };
 
-const formData = {
-  items: lines.map(({ merchandiseId, quantity }) => ({
-    id: Number(merchandiseId.replace("gid://shopify/ProductVariant/", "")),
-    quantity,
-    properties: {
-      bundleId: String(bundleData.id),  // <-- এখানে তোমার কাস্টম অ্যাট্রিবিউট
-    },
-  })),
-};
-
-  const res2 = await fetch("/cart/add.js", {
+  const res = await fetch("/cart/add.js", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -150,68 +148,106 @@ const formData = {
       console.error("Error:", error);
     });
 
-  const data2 = await res2.json();
-  console.log("Add lines response:", data2);
-
+  const data = await res.json();
+  console.log("Add lines response:", data);
 };
 
-const App = () => {
+const App = ({ product }) => {
+  console.log("Current page single product info:", product);
+
+  const productIdFromProps = String(product?.id);
+  const bundleProductId = bundleData?.shopify_prebuilt_bundle_operation_id
+    ?.split("/")
+    .pop();
+
+  const isIncluded = bundleData?.products?.some(
+    (product) => product?.id === productIdFromProps
+  );
+
+  const isExcluded = bundleData?.products?.some(
+    (p) => String(p?.id) == productIdFromProps && p?.is_excluded == true
+  );
+
+  // final check
+  const willBundleShow =
+    bundleData?.setting.show_on_included_product_page &&
+    isIncluded &&
+    !isExcluded;
+
+  console.log({
+    included: isIncluded,
+    excluded: isExcluded,
+    willShowBundle: willBundleShow,
+  });
+
   return (
-    <div id="products-container" className="products-wrapper">
-      {/* Discount Label */}
-      <div
-        style={{ border: "2px solid red", padding: "4px", marginBottom: "8px" }}
-      >
-        {bundleData?.discount?.type === "fixed" && "$"}
-        {bundleData?.discount?.value}
-        {bundleData?.discount?.type === "percentage" && "%"} off
-      </div>
-
-      {/* Product Cards */}
-      {bundleData?.products?.map((product) => (
-        <div className="product-card" key={product.id}>
-          <img
-            src={product.medias?.[0] || ""}
-            alt={product.title}
-            className="product-image"
-          />
-          <div className="product-info">
-            <p className="product-title">{product.title}</p>
-            <p className="product-price">
-              ${product.variants?.[0]?.price || "0.00"}
-            </p>
-
-            {/* Variant Selector */}
-            {product.variants?.length > 1 && (
-              <select
-                className="variant-selector"
-                onChange={(e) => {
-                  const selectedVariant = product.variants.find(
-                    (v) => v.id === e.target.value
-                  );
-                  console.log("Selected Variant:", selectedVariant);
-                  // You can add logic to update selected variant in state if needed
-                }}
-              >
-                {product.variants.map((variant) => (
-                  <option key={variant.id} value={variant.id}>
-                    {variant.title} - ${variant.price}
-                  </option>
-                ))}
-              </select>
-            )}
+    <>
+      {willBundleShow || product?.id == bundleProductId ? (
+        <div id="products-container" className="products-wrapper">
+          {/* Discount Label */}
+          <div
+            style={{
+              border: "2px solid red",
+              padding: "4px",
+              marginBottom: "8px",
+            }}
+          >
+            {bundleData?.discount?.type === "fixed" && "$"}
+            {bundleData?.discount?.value}
+            {bundleData?.discount?.type === "percentage" && "%"} off
           </div>
-        </div>
-      ))}
 
-      {/* Total Summary */}
-      <button
-        onClick={handleAddBundleToCart}
-        style={{ border: "2px solid red" }}
-      >
-        Add bundle to cart
-      </button>
-    </div>
+          {/* Product Cards */}
+          {bundleData?.products?.map((product) => (
+            <div className="product-card" key={product.id}>
+              <img
+                src={product.medias?.[0] || ""}
+                alt={product.title}
+                className="product-image"
+              />
+              <div className="product-info">
+                <p className="product-title">{product.title}</p>
+                <p className="product-price">
+                  ${product.variants?.[0]?.price || "0.00"}
+                </p>
+
+                {/* Variant Selector */}
+                {product.variants?.length > 1 && (
+                  <select
+                    className="variant-selector"
+                    onChange={(e) => {
+                      const selectedVariant = product.variants.find(
+                        (v) => v.id === e.target.value
+                      );
+                      console.log("Selected Variant:", selectedVariant);
+                      // You can add logic to update selected variant in state if needed
+                    }}
+                  >
+                    {product.variants.map((variant) => (
+                      <option key={variant.id} value={variant.id}>
+                        {variant.title} - ${variant.price}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+            </div>
+          ))}
+
+          {/* Total Summary */}
+          {product?.id == bundleProductId
+            ? null
+            : bundleData?.bundle_product_option == "none" && (
+                <button
+                  onClick={handleAddBundleToCart}
+                  style={{ border: "2px solid red" }}
+                >
+                  Add bundle to cart
+                </button>
+              )}
+        </div>
+      ) : null}
+    </>
   );
 };
 

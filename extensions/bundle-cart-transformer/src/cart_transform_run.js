@@ -134,8 +134,8 @@ export function cartTransformRun(input) {
   const operations = [];
 
   if (bundleData?.bundle_product_option === "none") {
-    return
-    console.log("input?.cart?.lines", JSON.stringify(input?.cart?.lines));
+    
+    // console.log("input?.cart?.lines", JSON.stringify(input?.cart?.lines));
     const bundlesProduct = bundleData?.products?.map(
       (product) => product?.variants[0]?.id
     );
@@ -150,18 +150,48 @@ const bundleLines = input.cart.lines.filter(line =>
   bundleVariantIds.includes(line.merchandise.id)
 );
 
+//  const bundleLines = input.cart.lines.filter((line) =>
+//       line.attributes?.some(
+//         (attr) =>
+//           attr.key === "bundleId" && attr.value === String(bundleData.id)
+//       )
+//     );
+
+//     const bundleLines = input?.cart?.lines?.filter((line) =>
+//   bundleVariantIds?.includes(line.merchandise.id) &&
+//   line.attributes?.some(
+//     (attr) =>
+//       attr.key === "bundleId" && attr.value == String(bundleData?.id)
+//   )
+// );
+
+// const bundleLines = input.cart.lines.filter((line) => {
+//     console.log("line", JSON.stringify(line))
+//      return bundleVariantIds.includes(line?.merchandise.id) &&
+//       line.properties?.bundleId === String(bundleData?.id)
+// }
+// );
+
+// const bundleLines = input.cart.lines.filter(
+//   (line) => {
+//     console.log('attr', line?.attributes)
+//   }
+    // bundleVariantIds.includes(line.merchandise.id) &&
+    // line.attributes?.some(
+    //   (attr) => attr.key === "bundleId" && attr.value == String(bundleData.id)
+    // )
+// );
+
+// console.log('bundleLines', JSON.stringify(bundleLines))
+
+
 if (bundleLines.length === 0) {
   // যদি bundleLines খালি হয়, তাহলে merge operation পাঠাও না
   return { operations: [] };
 }
 
 
-    // const bundleLines = input.cart.lines.filter((line) =>
-    //   line.attributes?.some(
-    //     (attr) =>
-    //       attr.key === "bundleId" && attr.value === String(bundleData.id)
-    //   )
-    // );
+   
 
     const mergedCartLines = bundleLines.map((line) => ({
       cartLineId: line.id,
