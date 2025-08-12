@@ -28,7 +28,7 @@ const bundleData = {
           quantity: 1,
           image_url: null,
         },
-      ], 
+      ],  
     },
     {
       id: "7333216583782",
@@ -109,7 +109,7 @@ const bundleData = {
       category: null,
       collections: [],
     },
-    show_on_included_product_page: false,
+    show_on_included_product_page: true,
   },
 };
 
@@ -170,7 +170,7 @@ const App = ({ product }) => {
 
   // final check
   const willBundleShow =
-    bundleData?.setting.show_on_included_product_page &&
+    bundleData?.setting.show_on_included_product_page == true &&
     isIncluded &&
     !isExcluded;
 
