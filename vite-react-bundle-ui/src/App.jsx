@@ -1,164 +1,30 @@
-import React from "react";
-
-const bundleData = {
-  id: 7,
-  title: "Prebuilt new",
-  type: "pre-built",
-  bundle_title: "asdf",
-  bundle_description: "adf",
-  shopify_prebuilt_bundle_operation_id:
-    "gid://shopify/ProductBundleOperation/7705503301734",
-  preview_urls: [
-    "https://cdn.shopify.com/s/files/1/0594/9125/4374/files/Main_0a40b01b-5021-48c1-80d1-aa8ab4876d3d.jpg?v=1719472366",
-  ],
-  default_preview_url:
-    "https://cdn.shopify.com/s/files/1/0594/9125/4374/files/Main_0a40b01b-5021-48c1-80d1-aa8ab4876d3d.jpg?v=1719472366",
-  products: [
-    {
-      id: "7333216485478",
-      title: "The Collection Snowboard: Hydrogen",
-      medias: [
-        "https://cdn.shopify.com/s/files/1/0594/9125/4374/files/Main_0a40b01b-5021-48c1-80d1-aa8ab4876d3d.jpg?v=1719472366",
-      ],
-      variants: [
-        {
-          id: "42123272683622",
-          title: "Purple",
-          price: "600.00",
-          quantity: 1,
-          image_url: null,
-        },
-      ],  
-    },
-    {
-      id: "7333216583782",
-      title: "The Complete Snowboard",
-      medias: [
-        "https://cdn.shopify.com/s/files/1/0594/9125/4374/files/Main_589fc064-24a2-4236-9eaf-13b2bd35d21d.jpg?v=1719472366",
-      ],
-      variants: [
-        {
-          id: "41764301635686",
-          title: "Ice",
-          price: "400",
-          quantity: 1,
-          image_url: null,
-        },
-        {
-          id: "41764301701222",
-          title: "Dawn",
-          price: "500",
-          quantity: 1,
-          image_url: null,
-        },
-        {
-          id: "41764301799526",
-          title: "Powder",
-          price: "600",
-          quantity: 1,
-          image_url: null,
-        },
-        {
-          id: "41764301897830",
-          title: "Electric",
-          price: "700",
-          quantity: 1,
-          image_url: null,
-        },
-        {
-          id: "41764301963366",
-          title: "Sunset",
-          price: "800",
-          quantity: 1,
-          image_url: null,
-        },
-      ],
-      is_excluded: true,
-    },
-  ],
-  discount: {
-    type: "percentage",
-    value: "20",
-    method: "shopify_scripts",
-    is_free_shipping: true,
-  },
-  bundle_product_option: "none",
-  setting: {
-    schedule: {
-      start_date: "2026-12-12",
-      start_time: "10:48",
-      end_date: null,
-      end_time: null,
-      timezone: "(GMT-03:00)",
-      will_apply_end_date: false,
-    },
-    audiences: [
-      {
-        id: 22,
-        name: "All users",
-      },
-    ],
-    bundle_details: {
-      discount_label_in_cart: "Discount label in cart",
-      how_to_present_bundle_in_cart: "line_item",
-    },
-    product_segment: {
-      tags: ["dynamatic-engraving-widget"],
-      product_type: "giftcard",
-      product_vendor: "Hydrogen Vendor",
-      category: null,
-      collections: [],
-    },
-    show_on_included_product_page: true,
-  },
-};
+import React, { useState } from "react"; 
+import { bundleData } from "../../extensions/commonBundleData"; 
 
 const STOREFRONT_ACCESS_TOKEN = "95b79191ef574df85795804c72ebe766";
-const SHOP_DOMAIN = "abu-raihan-jr.myshopify.com";
+const SHOP_DOMAIN = "abu-raihan-jr.myshopify.com"
 
-const handleAddBundleToCart = async () => {
- 
-    // প্রতিটি প্রোডাক্টের প্রথম variant নিয়ে bundle বানাচ্ছি
-  const lines = bundleData.products.map((product) => ({
-    merchandiseId: `gid://shopify/ProductVariant/${product.variants[0].id}`,
-    quantity: product.variants[0].quantity || 1,
-  }));
-
-  const formData = {
-    items: lines.map(({ merchandiseId, quantity }) => ({
-      id: Number(merchandiseId.replace("gid://shopify/ProductVariant/", "")),
-      quantity,
-      properties: {
-        bundleId: String(bundleData.id),
-      },
-    })),
-  };
-
-  const res = await fetch("/cart/add.js", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
-  })
-    .then((response) => {
-      return response.json();
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
-
-  const data = await res.json();
-  console.log("Add lines response:", data);
-};
 
 const App = ({ product }) => {
   console.log("Current page single product info:", product);
 
+    const [selectedVariants, setSelectedVariants] = useState({});
+
+     const handleVariantChange = (productId, variantId) => {
+    setSelectedVariants((prev) => ({
+      ...prev,
+      [productId]: variantId,
+    }));
+  };
+
+
   const productIdFromProps = String(product?.id);
-  const bundleProductId = bundleData?.shopify_prebuilt_bundle_operation_id
-    ?.split("/")
-    .pop();
+//   const bundleProductId = bundleData?.shopify_prebuilt_bundle_operation_id
+//     ?.split("/")
+//     .pop();
+
+  const bundleProductId = "7705503301734"
+
 
   const isIncluded = bundleData?.products?.some(
     (product) => product?.id === productIdFromProps
@@ -212,23 +78,20 @@ const App = ({ product }) => {
                 </p>
 
                 {/* Variant Selector */}
-                {product.variants?.length > 1 && (
-                  <select
+                 {product.variants?.length > 1 && (
+                    <select
                     className="variant-selector"
-                    onChange={(e) => {
-                      const selectedVariant = product.variants.find(
-                        (v) => v.id === e.target.value
-                      );
-                      console.log("Selected Variant:", selectedVariant);
-                      // You can add logic to update selected variant in state if needed
-                    }}
-                  >
+                    value={selectedVariants[product.id] || product.variants[0].id}
+                    onChange={(e) =>
+                        handleVariantChange(product.id, e.target.value)
+                    }
+                    >
                     {product.variants.map((variant) => (
-                      <option key={variant.id} value={variant.id}>
+                        <option key={variant.id} value={variant.id}>
                         {variant.title} - ${variant.price}
-                      </option>
+                        </option>
                     ))}
-                  </select>
+                    </select>
                 )}
               </div>
             </div>
@@ -239,7 +102,7 @@ const App = ({ product }) => {
             ? null
             : bundleData?.bundle_product_option == "none" && (
                 <button
-                  onClick={handleAddBundleToCart}
+                  onClick={() => handleAddBundleToCart(selectedVariants, handleVariantChange)}
                   style={{ border: "2px solid red" }}
                 >
                   Add bundle to cart
@@ -252,3 +115,51 @@ const App = ({ product }) => {
 };
 
 export default App;
+
+const handleAddBundleToCart = async (selectedVariants) => { 
+    // প্রতিটি প্রোডাক্টের প্রথম variant নিয়ে bundle বানাচ্ছি
+//   const lines = bundleData.products.map((product) => ({
+//     merchandiseId: `gid://shopify/ProductVariant/${product.variants[0].id}`,
+//     quantity: product.variants[0].quantity || 1,
+//   }));
+
+ const lines = bundleData.products.map((product) => {
+      const selectedVariantId = selectedVariants[product.id] || product.variants[0].id;
+
+      return {
+        merchandiseId: `gid://shopify/ProductVariant/${selectedVariantId}`,
+        quantity: product.variants.find((v) => v.id === selectedVariantId)
+          ?.quantity || 1,
+      };
+    });
+
+    console.log('lines', lines)
+
+  const formData = {
+    items: lines.map(({ merchandiseId, quantity }) => ({
+      id: Number(merchandiseId.replace("gid://shopify/ProductVariant/", "")),
+      quantity,
+      properties: {
+        bundleId: String(bundleData.id),
+      },
+    })),
+  };
+
+  const res = await fetch("/cart/add.js", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+
+  const data = await res.json();
+  console.log("Add lines response:", data);
+};
+
